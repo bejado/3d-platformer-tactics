@@ -12,7 +12,7 @@ height = 1.0
 [node name="Main" type="Node3D"]
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214735, -0.707107, -0.151841, 0.690612, 4.23291, 1.31956, 4.09443)
+transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214736, -0.707107, -0.151841, 0.690612, 17.0526, 5.41058, 17.0474)
 projection = 1
 size = 6.5
 
