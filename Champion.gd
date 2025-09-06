@@ -6,6 +6,7 @@ var is_dragging: bool = false
 var drag_offset: Vector3
 var original_position: Vector3
 var collision_body: StaticBody3D
+var cell_position: int = 22
 
 func _ready() -> void:
 	# Add to champion group for easy identification
@@ -66,6 +67,8 @@ func _end_drag(_event: InputEventMouseButton) -> void:
 		# Snap to grid cell
 		global_position = result["position"]
 		original_position = global_position
+		cell_position = result["index"]
+		print("Champion dropped in cell: ", cell_position)
 	else:
 		# Return to original position if no valid drop target
 		global_position = original_position
@@ -94,22 +97,25 @@ func _find_closest_grid_cell() -> Dictionary:
 	# Define all possible grid positions
 	var grid_positions = []
 	# Generate a 3x4 grid of positions in a loop
-	for row in range(4):
+	for row in range(8):
 		for col in range(3):
-			grid_positions.append(Vector3(-1 + col, 0.6, 3.5 - row))
+			grid_positions.append(Vector3(-1 + col, 0.6, -3.5 + row))
 	
 	var closest_position = Vector3.ZERO
 	var closest_distance = INF
 	
-	# Find the closest grid position
-	for pos in grid_positions:
+	# Find the closest grid position and save its index
+	var closest_index = -1
+	for i in grid_positions.size():
+		var pos = grid_positions[i]
 		var distance = global_position.distance_to(pos)
 		if distance < closest_distance:
 			closest_distance = distance
 			closest_position = pos
+			closest_index = i
 	
 	# Only snap if within a reasonable distance
 	if closest_distance < 2.0:  # Adjust this threshold as needed
-		return {"found": true, "position": closest_position}
+		return {"found": true, "position": closest_position, "index": closest_index}
 	
-	return {"found": false, "position": Vector3.ZERO}
+	return {"found": false, "position": Vector3.ZERO, "index": -1}

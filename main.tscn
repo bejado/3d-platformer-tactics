@@ -46,7 +46,7 @@ cols = 3
 spacing = 1.0
 
 [node name="Champion" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 1.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 3.5)
 mesh = SubResource("CylinderMesh_ig7tw")
 script = ExtResource("2_0xm2m")
 
