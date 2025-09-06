@@ -14,7 +14,7 @@ height = 1.0
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214735, -0.707107, -0.151841, 0.690612, 4.23291, 1.31956, 4.09443)
 projection = 1
-size = 9.095
+size = 6.5
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.436802, 0.50042, 0.747518, 0, -0.830984, 0.556296, 0.899558, 0.242991, 0.362976, 0, 0, 0)
