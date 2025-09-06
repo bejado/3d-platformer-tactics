@@ -63,7 +63,7 @@ func _start_drag(event: InputEventMouseButton) -> void:
 		drag_offset = global_position - _get_mouse_world_position(event.position)
 		print("Drag offset set to:", drag_offset)
 
-func _end_drag(event: InputEventMouseButton) -> void:
+func _end_drag(_event: InputEventMouseButton) -> void:
 	if not is_dragging:
 		return
 	
