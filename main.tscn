@@ -1,10 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://wnrmkghsv5i4"]
+[gd_scene load_steps=3 format=3 uid="uid://wnrmkghsv5i4"]
+
+[ext_resource type="Script" uid="uid://bo8s7pxs2d5rr" path="res://GridSpawner.gd" id="1_ig7tw"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_7dm0k"]
 
 [node name="Main" type="Node3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+visible = false
 mesh = SubResource("BoxMesh_7dm0k")
 
 [node name="Camera3D" type="Camera3D" parent="."]
@@ -16,3 +19,9 @@ size = 9.095
 transform = Transform3D(0.961038, 0.171556, -0.216736, 0.0118784, 0.757736, 0.652453, 0.276161, -0.629607, 0.726175, 0, 0, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="Grid" type="Node3D" parent="."]
+script = ExtResource("1_ig7tw")
+rows = 8
+cols = 3
+spacing = 1.0
