@@ -1,6 +1,8 @@
 @tool
 extends Node3D
 
+signal cell_clicked(cell_index: int)
+
 @export var rows: int = 5:
 	set(r):
 		rows = r
@@ -23,6 +25,7 @@ extends Node3D
 		_create_grid()
 
 var debug_labels: Array[Label3D] = []
+var currently_hovered_cell: StaticBody3D = null
 
 func _create_grid() -> void:
 	# Create one BoxMesh and share it across all children to save memory.
@@ -99,6 +102,9 @@ func _create_grid() -> void:
 			static_body.mouse_entered.connect(_on_mouse_entered.bind(static_body))
 			static_body.mouse_exited.connect(_on_mouse_exited.bind(static_body))
 			
+			# Store cell information as metadata for click detection
+			static_body.set_meta("cell_index", i)
+			
 			add_child(static_body)
 			i += 1
 
@@ -113,14 +119,29 @@ func _input(event: InputEvent) -> void:
 			var show_labels = event.pressed
 			for label in debug_labels:
 				label.visible = show_labels
+	
+	elif event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			# If there's a currently hovered cell, emit the click signal
+			if currently_hovered_cell:
+				var cell_index = currently_hovered_cell.get_meta("cell_index")
+				cell_clicked.emit(cell_index)
+				print("Cell clicked: index=%d" % cell_index)
 
 func _on_mouse_entered(static_body: StaticBody3D) -> void:
+	# Track the currently hovered cell
+	currently_hovered_cell = static_body
+	
 	# Change to hover material when mouse enters
 	var hover_material = static_body.get_meta("hover_material")
 	var mesh_instance = static_body.get_meta("mesh_instance")
 	mesh_instance.material_override = hover_material
 
 func _on_mouse_exited(static_body: StaticBody3D) -> void:
+	# Clear the currently hovered cell if it's this one
+	if currently_hovered_cell == static_body:
+		currently_hovered_cell = null
+	
 	# Revert to original material when mouse exits
 	var original_material = static_body.get_meta("original_material")
 	var mesh_instance = static_body.get_meta("mesh_instance")
