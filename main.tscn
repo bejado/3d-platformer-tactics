@@ -33,6 +33,7 @@ spacing = 1.0
 
 [node name="Air" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+visible = false
 script = ExtResource("1_ig7tw")
 rows = 8
 cols = 3
@@ -40,6 +41,7 @@ spacing = 1.0
 
 [node name="Basement" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+visible = false
 script = ExtResource("1_ig7tw")
 rows = 8
 cols = 3
