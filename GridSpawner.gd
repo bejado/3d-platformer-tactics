@@ -48,6 +48,8 @@ func _create_grid() -> void:
 			# Create MeshInstance3D as child of StaticBody3D
 			var mi := MeshInstance3D.new()
 			mi.mesh = shared_mesh
+			# Disable shadow casting for grid meshes
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			static_body.add_child(mi)
 			
 			# Create collision shape for mouse detection
