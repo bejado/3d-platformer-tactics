@@ -17,11 +17,15 @@ extends Node3D
 	set(s):
 		cube_size = s
 		_create_grid()
+@export var cube_thickness: float = 0.1:
+	set(t):
+		cube_thickness = t
+		_create_grid()
 
 func _create_grid() -> void:
 	# Create one BoxMesh and share it across all children to save memory.
 	var shared_mesh := BoxMesh.new()
-	shared_mesh.size = Vector3(cube_size, cube_size, cube_size)
+	shared_mesh.size = Vector3(cube_size, cube_thickness, cube_size)
 
 	# Optional: clear previous children if you re-run this scene often
 	for child in get_children():
@@ -37,7 +41,7 @@ func _create_grid() -> void:
 			mi.mesh = shared_mesh
 			mi.transform.origin = Vector3(
 				(c - x_center) * spacing,  # X
-				0.0,                       # Y
+				cube_thickness * 0.5,      # Y
 				(r - z_center) * spacing   # Z
 			)
 			add_child(mi)
