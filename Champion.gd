@@ -10,22 +10,17 @@ var collision_body: StaticBody3D
 func _ready() -> void:
 	# Add to champion group for easy identification
 	add_to_group("champion")
-	print("Champion added to group 'champion'.")
 
 	# Find the StaticBody3D child for collision detection
 	collision_body = get_node("StaticBody3D")
 	if not collision_body:
-		print("ERROR: No StaticBody3D child found! Champion needs a StaticBody3D child for collision detection.")
 		return
-	print("Collision body found:", collision_body)
 
 	# Store original position and parent
 	original_position = global_position
-	print("Original position:", original_position)
 
 	# Enable input processing
 	set_process_input(true)
-	print("Input processing enabled for Champion.")
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -42,26 +37,21 @@ func _start_drag(event: InputEventMouseButton) -> void:
 	# Check if mouse is over this champion
 	var camera = get_viewport().get_camera_3d()
 	if not camera:
-		print("No camera found in viewport.")
 		return
 	
 	# Create a ray from camera through mouse position
 	var from = camera.project_ray_origin(event.position)
 	var to = from + camera.project_ray_normal(event.position) * 1000
-	print("Ray from:", from, "to:", to)
 	
 	# Check if ray intersects with this champion's bounding box
 	var space_state = get_world_3d().direct_space_state
 	var query = PhysicsRayQueryParameters3D.create(from, to)
 	var result = space_state.intersect_ray(query)
-	print("Raycast result:", result)
 	
 	# Check if this champion is being clicked (check collision body instead of self)
 	if result and result.collider == collision_body:
-		print("Champion clicked for dragging.")
 		is_dragging = true
 		drag_offset = global_position - _get_mouse_world_position(event.position)
-		print("Drag offset set to:", drag_offset)
 
 func _end_drag(_event: InputEventMouseButton) -> void:
 	if not is_dragging:
