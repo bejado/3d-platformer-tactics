@@ -102,20 +102,11 @@ func _get_mouse_world_position(mouse_pos: Vector2) -> Vector3:
 
 func _find_closest_grid_cell() -> Dictionary:
 	# Define all possible grid positions
-	var grid_positions = [
-		Vector3(-1, 0.6, 3.5),
-		Vector3(0, 0.6, 3.5),
-		Vector3(1, 0.6, 3.5),
-		Vector3(-1, 0.6, 2.5),
-		Vector3(0, 0.6, 2.5),
-		Vector3(1, 0.6, 2.5),
-		Vector3(-1, 0.6, 1.5),
-		Vector3(0, 0.6, 1.5),
-		Vector3(1, 0.6, 1.5),
-		Vector3(-1, 0.6, 0.5),
-		Vector3(0, 0.6, 0.5),
-		Vector3(1, 0.6, 0.5)
-	]
+	var grid_positions = []
+	# Generate a 3x4 grid of positions in a loop
+	for row in range(4):
+		for col in range(3):
+			grid_positions.append(Vector3(-1 + col, 0.6, 3.5 - row))
 	
 	var closest_position = Vector3.ZERO
 	var closest_distance = INF
