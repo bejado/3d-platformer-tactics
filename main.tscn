@@ -8,7 +8,9 @@
 mesh = SubResource("BoxMesh_7dm0k")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.795241, 0, 0.606294, 0, 1, 0, -0.606294, 0, 0.795241, 3.30763, 2.14398, 4.19652)
+transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214735, -0.707107, -0.151841, 0.690612, 4.23291, 1.31956, 4.09443)
+projection = 1
+size = 9.095
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.961038, 0.171556, -0.216736, 0.0118784, 0.757736, 0.652453, 0.276161, -0.629607, 0.726175, 0, 0, 0)
