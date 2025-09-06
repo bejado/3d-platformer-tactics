@@ -59,7 +59,11 @@ func _create_grid() -> void:
 			
 			# Create materials for hover effect
 			var original_material := StandardMaterial3D.new()
-			original_material.albedo_color = Color.WHITE
+			# Alternate white and grey for grid cells
+			if ((r + c) % 2) == 0:
+				original_material.albedo_color = Color.WHITE
+			else:
+				original_material.albedo_color = Color(0.7, 0.7, 0.7)
 			mi.material_override = original_material
 			
 			var hover_material := StandardMaterial3D.new()
