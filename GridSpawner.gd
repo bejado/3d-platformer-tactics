@@ -22,11 +22,16 @@ extends Node3D
 		cube_thickness = t
 		_create_grid()
 
+var debug_labels: Array[Label3D] = []
+
 func _create_grid() -> void:
 	# Create one BoxMesh and share it across all children to save memory.
 	var shared_mesh := BoxMesh.new()
 	shared_mesh.size = Vector3(cube_size, cube_thickness, cube_size)
 
+	# Clear debug labels array
+	debug_labels.clear()
+	
 	# Optional: clear previous children if you re-run this scene often
 	for child in get_children():
 		child.queue_free()
@@ -35,6 +40,7 @@ func _create_grid() -> void:
 	var x_center := (cols - 1) * 0.5
 	var z_center := (rows - 1) * 0.5
 
+	var i = 0
 	for r in range(rows):
 		for c in range(cols):
 			# Create a StaticBody3D to handle mouse picking
@@ -59,6 +65,19 @@ func _create_grid() -> void:
 			collision_shape.shape = box_shape
 			static_body.add_child(collision_shape)
 			
+			# Create 3D text label for debugging
+			var label_3d := Label3D.new()
+			label_3d.text = "%d" % [i]  # Show column, row index
+			label_3d.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			label_3d.no_depth_test = true
+			label_3d.position = Vector3(0, 0.1, 0)  # Slightly above the cell
+			label_3d.scale = Vector3(1.0, 1.0, 1.0)  # Make it smaller
+			label_3d.visible = false  # Start hidden
+			static_body.add_child(label_3d)
+			
+			# Store reference for debug toggle
+			debug_labels.append(label_3d)
+			
 			# Create materials for hover effect
 			var original_material := StandardMaterial3D.new()
 			# Alternate white and grey for grid cells
@@ -81,9 +100,19 @@ func _create_grid() -> void:
 			static_body.mouse_exited.connect(_on_mouse_exited.bind(static_body))
 			
 			add_child(static_body)
+			i += 1
 
 func _ready() -> void:
 	_create_grid()
+	set_process_input(true)
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.keycode == KEY_D:
+			# Toggle debug labels visibility when D key is pressed/released
+			var show_labels = event.pressed
+			for label in debug_labels:
+				label.visible = show_labels
 
 func _on_mouse_entered(static_body: StaticBody3D) -> void:
 	# Change to hover material when mouse enters
