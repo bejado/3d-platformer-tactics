@@ -10,11 +10,25 @@ projection = 1
 size = 9.095
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.961038, 0.171556, -0.216736, 0.0118784, 0.757736, 0.652453, 0.276161, -0.629607, 0.726175, 0, 0, 0)
+transform = Transform3D(-0.436802, 0.50042, 0.747518, 0, -0.830984, 0.556296, 0.899558, 0.242991, 0.362976, 0, 0, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 
-[node name="Grid" type="Node3D" parent="."]
+[node name="Floor" type="Node3D" parent="."]
+script = ExtResource("1_ig7tw")
+rows = 8
+cols = 3
+spacing = 1.0
+
+[node name="Air" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("1_ig7tw")
+rows = 8
+cols = 3
+spacing = 1.0
+
+[node name="Basement" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
 script = ExtResource("1_ig7tw")
 rows = 8
 cols = 3
