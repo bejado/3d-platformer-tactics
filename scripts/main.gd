@@ -69,6 +69,10 @@ func _ready():
 
 func _on_turn_started(player_id: int) -> void:
 	$Instructions.text = "Player %d's turn" % [player_id + 1]
+	if player_id == 0:
+		$Instructions.label_settings.font_color = Color.RED
+	else:
+		$Instructions.label_settings.font_color = Color.BLUE
 	self.current_player_id = player_id
 
 	# Determine the movement range for this chamption.
@@ -108,6 +112,7 @@ func _on_phase_changed(phase: Game.Phase) -> void:
 	match phase:
 		Game.Phase.POSITION_CHAMPION:
 			$Instructions.text = "Place the champions on the grid"
+			$Instructions.label_settings.font_color = Color.WHITE
 			for i in champions.size():
 				champions[i].can_be_dragged = true
 			champions[0].allowed_cell_range = [12, 23]
