@@ -1,7 +1,7 @@
 extends Node3D
 
 @onready var grid := $Floor
-@onready var champions: Array[MeshInstance3D] = [$Champion0, $Champion1]
+@onready var champions: Array[Champion] = [$Champion0, $Champion1]
 
 var current_player_id: int = 0
 

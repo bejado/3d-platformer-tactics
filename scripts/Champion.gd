@@ -1,4 +1,5 @@
 extends MeshInstance3D
+class_name Champion
 
 @export var can_be_dragged: bool = true
 @export var cell_position: int = 0:
