@@ -33,12 +33,23 @@ rows = 8
 cols = 3
 spacing = 1.0
 
-[node name="Champion" type="MeshInstance3D" parent="."]
+[node name="Champion0" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 3.5)
 mesh = SubResource("CylinderMesh_ig7tw")
 script = ExtResource("2_0xm2m")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Champion"]
+[node name="StaticBody3D" type="StaticBody3D" parent="Champion0"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Champion/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Champion0/StaticBody3D"]
+shape = SubResource("CylinderShape3D_0xm2m")
+
+[node name="Champion1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -3.5)
+mesh = SubResource("CylinderMesh_ig7tw")
+script = ExtResource("2_0xm2m")
+can_be_dragged = false
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Champion1"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Champion1/StaticBody3D"]
 shape = SubResource("CylinderShape3D_0xm2m")
