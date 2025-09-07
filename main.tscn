@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://wnrmkghsv5i4"]
+[gd_scene load_steps=7 format=3 uid="uid://wnrmkghsv5i4"]
 
 [ext_resource type="Script" uid="uid://c4t0q4iy3mmp4" path="res://scripts/main.gd" id="1_h2yge"]
 [ext_resource type="Script" uid="uid://dncfiif3gkw85" path="res://scripts/GridSpawner.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cp61tk1lsl62y" path="res://scripts/Champion.gd" id="2_0xm2m"]
+
+[sub_resource type="Environment" id="Environment_h2yge"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_ig7tw"]
 height = 1.0
@@ -26,6 +28,7 @@ directional_shadow_split_1 = 0.009
 directional_shadow_split_2 = 0.412
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_h2yge")
 
 [node name="Floor" type="Node3D" parent="."]
 script = ExtResource("1_ig7tw")
