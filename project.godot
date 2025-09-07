@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="3d-platformer-tactics"
-run/main_scene="uid://wnrmkghsv5i4"
+run/main_scene="uid://cu0vu1v6km66y"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
 
