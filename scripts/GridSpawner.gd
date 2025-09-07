@@ -31,46 +31,18 @@ var cells_in_movement_range: Array[int] = []
 var is_showing_movement_range: bool = false
 
 
-func _cell_index_to_row_col(cell_index: int) -> Vector2i:
-	return Vector2i(cell_index / cols, cell_index % cols)
+func set_range(range_bits: int) -> void:
+	"""
+	range_bits is a bitmask, where each bit represents a cell
+	For example, if range_bits is 0b1, then only cell 0 is in range
+	"""
+	hide_range()
 
+	var cell_count = rows * cols
 
-func _row_col_to_cell_index(row: int, col: int) -> int:
-	return row * cols + col
-
-
-func _is_cell_in_bounds(row: int, col: int) -> bool:
-	return row >= 0 and row < rows and col >= 0 and col < cols
-
-
-func show_movement_range(cell_index: int) -> void:
-	hide_movement_range()
-
-	# Validate cell index
-	if cell_index < 0 or cell_index >= grid_cells.size():
-		print("Invalid cell index: ", cell_index)
-		return
-
-	# Set movement range mode
-	is_showing_movement_range = true
-
-	var rc = _cell_index_to_row_col(cell_index)
-
-	var cells = [
-		Vector2i(rc.x, rc.y),
-		Vector2i(rc.x + 1, rc.y),
-		Vector2i(rc.x - 1, rc.y),
-		Vector2i(rc.x, rc.y + 1),
-		Vector2i(rc.x, rc.y - 1),
-		Vector2i(rc.x + 1, rc.y + 1),
-		Vector2i(rc.x - 1, rc.y + 1),
-		Vector2i(rc.x + 1, rc.y - 1),
-		Vector2i(rc.x - 1, rc.y - 1),
-	]
-
-	for cell in cells:
-		if _is_cell_in_bounds(cell.x, cell.y):
-			var i = _row_col_to_cell_index(cell.x, cell.y)
+	# Loop through each bit in range_bits
+	for i in range(cell_count):
+		if range_bits & (1 << i):
 			cells_in_movement_range.append(i)
 
 			# Get the target cell
@@ -81,8 +53,11 @@ func show_movement_range(cell_index: int) -> void:
 			# Apply movement range material
 			mesh_instance.material_override = movement_material
 
+	# Set movement range mode
+	is_showing_movement_range = true
 
-func hide_movement_range() -> void:
+
+func hide_range() -> void:
 	# Clear movement range tracking
 	cells_in_movement_range.clear()
 	is_showing_movement_range = false
