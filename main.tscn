@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://wnrmkghsv5i4"]
 
-[ext_resource type="Script" uid="uid://dh7dtjl3r02l1" path="res://main.gd" id="1_h2yge"]
-[ext_resource type="Script" uid="uid://bo8s7pxs2d5rr" path="res://GridSpawner.gd" id="1_ig7tw"]
-[ext_resource type="Script" uid="uid://b536jg6twf0wf" path="res://Champion.gd" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://c4t0q4iy3mmp4" path="res://scripts/main.gd" id="1_h2yge"]
+[ext_resource type="Script" uid="uid://dncfiif3gkw85" path="res://scripts/GridSpawner.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://cp61tk1lsl62y" path="res://scripts/Champion.gd" id="2_0xm2m"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_ig7tw"]
 height = 1.0
