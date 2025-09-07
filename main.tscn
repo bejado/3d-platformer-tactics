@@ -37,6 +37,7 @@ spacing = 1.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 3.5)
 mesh = SubResource("CylinderMesh_ig7tw")
 script = ExtResource("2_0xm2m")
+cell_position = 22
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Champion0"]
 
@@ -47,7 +48,7 @@ shape = SubResource("CylinderShape3D_0xm2m")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -3.5)
 mesh = SubResource("CylinderMesh_ig7tw")
 script = ExtResource("2_0xm2m")
-can_be_dragged = false
+cell_position = 1
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Champion1"]
 

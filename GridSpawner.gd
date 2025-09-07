@@ -26,6 +26,63 @@ signal cell_clicked(cell_index: int)
 
 var debug_labels: Array[Label3D] = []
 var currently_hovered_cell: StaticBody3D = null
+var grid_cells: Array[StaticBody3D] = []
+var cells_in_movement_range: Array[int] = []
+var is_showing_movement_range: bool = false
+
+func _cell_index_to_row_col(cell_index: int) -> Vector2i:
+	return Vector2i(cell_index / cols, cell_index % cols)
+
+func _row_col_to_cell_index(row: int, col: int) -> int:
+	return row * cols + col
+
+func _is_cell_in_bounds(row: int, col: int) -> bool:
+	return row >= 0 and row < rows and col >= 0 and col < cols
+
+func show_movement_range(cell_index: int) -> void:
+	hide_movement_range()
+
+	# Validate cell index
+	if cell_index < 0 or cell_index >= grid_cells.size():
+		print("Invalid cell index: ", cell_index)
+		return
+
+	# Set movement range mode
+	is_showing_movement_range = true
+
+	var rc = _cell_index_to_row_col(cell_index)
+	
+	var cells = [
+		Vector2i(rc.x, rc.y),
+		Vector2i(rc.x + 1, rc.y),
+		Vector2i(rc.x - 1, rc.y),
+		Vector2i(rc.x, rc.y + 1),
+		Vector2i(rc.x, rc.y - 1)
+	]
+
+	for cell in cells:
+		if _is_cell_in_bounds(cell.x, cell.y):
+			var i = _row_col_to_cell_index(cell.x, cell.y)
+			cells_in_movement_range.append(i)
+
+			# Get the target cell
+			var target_cell = grid_cells[i]
+			var mesh_instance = target_cell.get_meta("mesh_instance")
+			var movement_material = target_cell.get_meta("movement_material")
+			
+			# Apply movement range material
+			mesh_instance.material_override = movement_material
+
+func hide_movement_range() -> void:
+	# Clear movement range tracking
+	cells_in_movement_range.clear()
+	is_showing_movement_range = false
+	
+	# Reset all cells to their original materials
+	for cell in grid_cells:
+		var mesh_instance = cell.get_meta("mesh_instance")
+		var original_material = cell.get_meta("original_material")
+		mesh_instance.material_override = original_material
 
 func _create_grid() -> void:
 	# Create one BoxMesh and share it across all children to save memory.
@@ -34,6 +91,7 @@ func _create_grid() -> void:
 
 	# Clear debug labels array
 	debug_labels.clear()
+	grid_cells.clear()
 	
 	# Optional: clear previous children if you re-run this scene often
 	for child in get_children():
@@ -93,9 +151,29 @@ func _create_grid() -> void:
 			var hover_material := StandardMaterial3D.new()
 			hover_material.albedo_color = Color.YELLOW
 			
+			# Create movement range material (green with checkerboard multiplier)
+			var movement_material := StandardMaterial3D.new()
+			if ((r + c) % 2) == 0:
+				# White cell - use full green
+				movement_material.albedo_color = Color.GREEN
+			else:
+				# Grey cell - use darker green (multiply with 0.7)
+				movement_material.albedo_color = Color(0, 0.7, 0)
+			
+			# Create hover + movement range material (yellow on green)
+			var hover_movement_material := StandardMaterial3D.new()
+			if ((r + c) % 2) == 0:
+				# White cell - bright yellow on green
+				hover_movement_material.albedo_color = Color(1, 1, 0)  # Bright yellow
+			else:
+				# Grey cell - darker yellow on green
+				hover_movement_material.albedo_color = Color(0.7, 0.7, 0)  # Darker yellow
+			
 			# Store materials as metadata for hover detection
 			static_body.set_meta("original_material", original_material)
 			static_body.set_meta("hover_material", hover_material)
+			static_body.set_meta("movement_material", movement_material)
+			static_body.set_meta("hover_movement_material", hover_movement_material)
 			static_body.set_meta("mesh_instance", mi)
 			
 			# Connect mouse signals to StaticBody3D
@@ -106,6 +184,7 @@ func _create_grid() -> void:
 			static_body.set_meta("cell_index", i)
 			
 			add_child(static_body)
+			grid_cells.append(static_body)
 			i += 1
 
 func _ready() -> void:
@@ -125,23 +204,56 @@ func _input(event: InputEvent) -> void:
 			# If there's a currently hovered cell, emit the click signal
 			if currently_hovered_cell:
 				var cell_index = currently_hovered_cell.get_meta("cell_index")
-				cell_clicked.emit(cell_index)
+				
+				# If showing movement range, only allow clicks on movement range cells
+				if is_showing_movement_range:
+					if cell_index in cells_in_movement_range:
+						cell_clicked.emit(cell_index)
+					else:
+						print("Can only select cells within movement range")
+				else:
+					# Normal mode - allow clicks on any cell
+					cell_clicked.emit(cell_index)
 
 func _on_mouse_entered(static_body: StaticBody3D) -> void:
+	# Get cell index to check if it's in movement range
+	var cell_index = static_body.get_meta("cell_index")
+	
+	# If showing movement range, only allow hover on movement range cells
+	if is_showing_movement_range:
+		if cell_index not in cells_in_movement_range:
+			return  # Don't show hover for non-movement range cells
+	
 	# Track the currently hovered cell
 	currently_hovered_cell = static_body
 	
-	# Change to hover material when mouse enters
-	var hover_material = static_body.get_meta("hover_material")
 	var mesh_instance = static_body.get_meta("mesh_instance")
-	mesh_instance.material_override = hover_material
+	
+	# Choose appropriate hover material based on movement range state
+	if cell_index in cells_in_movement_range:
+		# Cell is in movement range - use yellow hover on green
+		var hover_movement_material = static_body.get_meta("hover_movement_material")
+		mesh_instance.material_override = hover_movement_material
+	else:
+		# Cell is not in movement range - use normal yellow hover
+		var hover_material = static_body.get_meta("hover_material")
+		mesh_instance.material_override = hover_material
 
 func _on_mouse_exited(static_body: StaticBody3D) -> void:
 	# Clear the currently hovered cell if it's this one
 	if currently_hovered_cell == static_body:
 		currently_hovered_cell = null
 	
-	# Revert to original material when mouse exits
-	var original_material = static_body.get_meta("original_material")
+	# Get cell index to check if it's in movement range
+	var cell_index = static_body.get_meta("cell_index")
 	var mesh_instance = static_body.get_meta("mesh_instance")
-	mesh_instance.material_override = original_material
+	
+	# Revert to appropriate material based on movement range state
+	if cell_index in cells_in_movement_range:
+		# Cell is in movement range - revert to green movement material
+		var movement_material = static_body.get_meta("movement_material")
+		mesh_instance.material_override = movement_material
+	else:
+		# Cell is not in movement range - revert to original material
+		var original_material = static_body.get_meta("original_material")
+		mesh_instance.material_override = original_material

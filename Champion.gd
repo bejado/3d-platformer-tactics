@@ -1,12 +1,17 @@
 extends MeshInstance3D
 
 @export var can_be_dragged: bool = true
+@export var cell_position: int = 0:
+	set(cp):
+		var col = cp % 3
+		var row = cp / 3
+		global_position = Vector3(-1 + col, 0.6, -3.5 + row)
+		cell_position = cp
 
 var is_dragging: bool = false
 var drag_offset: Vector3
 var original_position: Vector3
 var collision_body: StaticBody3D
-var cell_position: int = 22
 
 func _ready() -> void:
 	# Add to champion group for easy identification
