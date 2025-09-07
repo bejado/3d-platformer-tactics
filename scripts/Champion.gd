@@ -11,7 +11,7 @@ signal champion_dropped(cell_position: int)
 			return
 		var col = cp % 3
 		var row = cp / 3
-		global_position = Vector3(-1 + col, 0.6, -3.5 + row)
+		global_position = Vector3(-1 + col, 0.1, -3.5 + row)
 		cell_position = cp
 @export var allowed_cell_range: Array[int] = [0, INF]
 
@@ -127,7 +127,7 @@ func _find_closest_grid_cell() -> Dictionary:
 	# Generate a 3x4 grid of positions in a loop
 	for row in range(8):
 		for col in range(3):
-			grid_positions.append(Vector3(-1 + col, 0.6, -3.5 + row))
+			grid_positions.append(Vector3(-1 + col, 0.1, -3.5 + row))
 
 	var closest_position = Vector3.ZERO
 	var closest_distance = INF

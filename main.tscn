@@ -4,15 +4,14 @@
 [ext_resource type="Script" uid="uid://dncfiif3gkw85" path="res://scripts/GridSpawner.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://cp61tk1lsl62y" path="res://scripts/Champion.gd" id="2_0xm2m"]
 [ext_resource type="Material" uid="uid://xgj68krnktdg" path="res://materials/champion_0.tres" id="3_1bvp3"]
+[ext_resource type="ArrayMesh" uid="uid://bws5ldhvsy55i" path="res://meshes/pawn.obj" id="4_7mycd"]
 [ext_resource type="Material" uid="uid://sfhienivfn" path="res://materials/champion_1.tres" id="5_lquwl"]
 
 [sub_resource type="Environment" id="Environment_h2yge"]
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_ig7tw"]
-height = 1.0
-
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0xm2m"]
 height = 1.0
+radius = 0.25
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_h2yge")
@@ -39,27 +38,29 @@ cols = 3
 spacing = 1.0
 
 [node name="Champion0" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 6)
 material_override = ExtResource("3_1bvp3")
-mesh = SubResource("CylinderMesh_ig7tw")
+mesh = ExtResource("4_7mycd")
 script = ExtResource("2_0xm2m")
 cell_position = -1
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Champion0"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Champion0/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_0xm2m")
 
 [node name="Champion1" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -6)
 material_override = ExtResource("5_lquwl")
-mesh = SubResource("CylinderMesh_ig7tw")
+mesh = ExtResource("4_7mycd")
 script = ExtResource("2_0xm2m")
 cell_position = -1
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Champion1"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Champion1/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_0xm2m")
 
 [node name="Instructions" type="Label" parent="."]
