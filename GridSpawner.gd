@@ -126,7 +126,6 @@ func _input(event: InputEvent) -> void:
 			if currently_hovered_cell:
 				var cell_index = currently_hovered_cell.get_meta("cell_index")
 				cell_clicked.emit(cell_index)
-				print("Cell clicked: index=%d" % cell_index)
 
 func _on_mouse_entered(static_body: StaticBody3D) -> void:
 	# Track the currently hovered cell

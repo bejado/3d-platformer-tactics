@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://wnrmkghsv5i4"]
+[gd_scene load_steps=6 format=3 uid="uid://wnrmkghsv5i4"]
 
+[ext_resource type="Script" uid="uid://dh7dtjl3r02l1" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="Script" uid="uid://bo8s7pxs2d5rr" path="res://GridSpawner.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://b536jg6twf0wf" path="res://Champion.gd" id="2_0xm2m"]
 
@@ -10,9 +11,10 @@ height = 1.0
 height = 1.0
 
 [node name="Main" type="Node3D"]
+script = ExtResource("1_h2yge")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214736, -0.707107, -0.151841, 0.690612, 17.0526, 5.41058, 17.0474)
+transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214735, -0.707107, -0.151841, 0.690612, 17.0526, 5.41058, 17.0474)
 projection = 1
 size = 6.5
 
