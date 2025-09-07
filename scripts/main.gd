@@ -40,6 +40,8 @@ func _on_phase_changed(phase: Game.Phase) -> void:
 		Game.Phase.POSITION_CHAMPION:
 			for i in champions.size():
 				champions[i].can_be_dragged = true
+			champions[0].allowed_cell_range = [12, 23]
+			champions[1].allowed_cell_range = [0, 11]
 		Game.Phase.COMBAT:
 			for i in champions.size():
 				champions[i].can_be_dragged = false

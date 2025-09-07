@@ -13,6 +13,7 @@ signal champion_dropped(cell_position: int)
 		var row = cp / 3
 		global_position = Vector3(-1 + col, 0.6, -3.5 + row)
 		cell_position = cp
+@export var allowed_cell_range: Array[int] = [0, INF]
 
 var is_dragging: bool = false
 var drag_offset: Vector3
@@ -82,7 +83,12 @@ func _end_drag(_event: InputEventMouseButton) -> void:
 	# Find the closest grid cell
 	var result = _find_closest_grid_cell()
 
-	if result["found"]:
+	# Check if the cell is in the allowed cell range
+	var is_in_allowed_cell_range = (
+		result["index"] >= allowed_cell_range[0] and result["index"] <= allowed_cell_range[1]
+	)
+
+	if result["found"] and is_in_allowed_cell_range:
 		# Snap to grid cell
 		global_position = result["position"]
 		original_position = global_position
