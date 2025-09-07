@@ -1,9 +1,14 @@
 extends MeshInstance3D
 class_name Champion
 
+signal champion_dropped(cell_position: int)
+
 @export var can_be_dragged: bool = true
 @export var cell_position: int = 0:
 	set(cp):
+		if cp == -1:
+			cell_position = -1
+			return
 		var col = cp % 3
 		var row = cp / 3
 		global_position = Vector3(-1 + col, 0.6, -3.5 + row)
@@ -82,7 +87,7 @@ func _end_drag(_event: InputEventMouseButton) -> void:
 		global_position = result["position"]
 		original_position = global_position
 		cell_position = result["index"]
-		print("Champion dropped in cell: ", cell_position)
+		champion_dropped.emit(cell_position)
 	else:
 		# Return to original position if no valid drop target
 		global_position = original_position

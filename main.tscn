@@ -37,10 +37,10 @@ cols = 3
 spacing = 1.0
 
 [node name="Champion0" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 3.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 6)
 mesh = SubResource("CylinderMesh_ig7tw")
 script = ExtResource("2_0xm2m")
-cell_position = 22
+cell_position = -1
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Champion0"]
 
@@ -48,10 +48,10 @@ cell_position = 22
 shape = SubResource("CylinderShape3D_0xm2m")
 
 [node name="Champion1" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -3.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -6)
 mesh = SubResource("CylinderMesh_ig7tw")
 script = ExtResource("2_0xm2m")
-cell_position = 1
+cell_position = -1
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Champion1"]
 
