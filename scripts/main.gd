@@ -18,6 +18,7 @@ func _ready():
 
 
 func _on_turn_started(player_id: int) -> void:
+	$Instructions.text = "Player %d's turn" % [player_id + 1]
 	self.current_player_id = player_id
 	grid.show_movement_range(champions[player_id].cell_position)
 
@@ -38,6 +39,7 @@ func _on_champion_dropped(
 func _on_phase_changed(phase: Game.Phase) -> void:
 	match phase:
 		Game.Phase.POSITION_CHAMPION:
+			$Instructions.text = "Place the champions on the grid"
 			for i in champions.size():
 				champions[i].can_be_dragged = true
 			champions[0].allowed_cell_range = [12, 23]

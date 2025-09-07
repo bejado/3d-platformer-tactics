@@ -62,7 +62,6 @@ func show_movement_range(cell_index: int) -> void:
 		Vector2i(rc.x - 1, rc.y),
 		Vector2i(rc.x, rc.y + 1),
 		Vector2i(rc.x, rc.y - 1),
-
 		Vector2i(rc.x + 1, rc.y + 1),
 		Vector2i(rc.x - 1, rc.y + 1),
 		Vector2i(rc.x + 1, rc.y - 1),

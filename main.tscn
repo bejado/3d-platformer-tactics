@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://wnrmkghsv5i4"]
+[gd_scene load_steps=7 format=3 uid="uid://cu0vu1v6km66y"]
 
 [ext_resource type="Script" uid="uid://c4t0q4iy3mmp4" path="res://scripts/main.gd" id="1_h2yge"]
 [ext_resource type="Script" uid="uid://dncfiif3gkw85" path="res://scripts/GridSpawner.gd" id="1_ig7tw"]
@@ -57,3 +57,13 @@ cell_position = -1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Champion1/StaticBody3D"]
 shape = SubResource("CylinderShape3D_0xm2m")
+
+[node name="Instructions" type="Label" parent="."]
+anchors_preset = -1
+anchor_right = 1.0
+offset_top = 70.0
+offset_bottom = 113.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 62
+text = "lorem ipsum"
+horizontal_alignment = 1
