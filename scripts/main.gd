@@ -23,6 +23,9 @@ class GridPosition:
 	func is_in_bounds() -> bool:
 		return row >= 0 and row < rows and col >= 0 and col < cols
 
+	func equals(other: GridPosition) -> bool:
+		return row == other.row and col == other.col
+
 	func get_neighbors() -> Array[GridPosition]:
 		"""
 		Returns the neighbors (both diagonal and orthogonal) of the grid position.
@@ -48,6 +51,10 @@ class GridPosition:
 			bitmask |= 1 << grid_position.to_cell_index()
 		return bitmask
 
+	static func debug_print(grid_positions: Array[GridPosition]) -> void:
+		for grid_position in grid_positions:
+			print(grid_position.to_cell_index())
+
 
 func _ready():
 	print(grid)
@@ -68,11 +75,24 @@ func _on_turn_started(player_id: int) -> void:
 	var movement_range: Array[GridPosition] = []
 	var chamption_position = GridPosition.from_cell_index(champions[player_id].cell_position)
 	movement_range.append_array(chamption_position.get_neighbors())
+
+	# Don't allow this chamption to move to a cell if it's occupied.
+	var other_player_id = 1 - player_id
+	var other_champion_position = GridPosition.from_cell_index(
+		Game.get_champion_position(other_player_id)
+	)
+	movement_range = movement_range.filter(
+		func(cell): return not cell.equals(other_champion_position)
+	)
+
+	GridPosition.debug_print(movement_range)
+
 	grid.set_range(GridPosition.to_bitmask(movement_range))
 
 
 func _on_cell_clicked(_cell_index: int) -> void:
 	champions[self.current_player_id].cell_position = _cell_index
+	Game.set_champion_position(self.current_player_id, _cell_index)
 	Game.end_turn(self.current_player_id)
 
 

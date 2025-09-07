@@ -15,14 +15,18 @@ func start_game() -> void:
 
 
 func set_champion_position(player_id: int, cell_position: int) -> void:
-	if current_phase != Phase.POSITION_CHAMPION:
-		print("Error: Set champion position called in phase ", current_phase)
-		return
 	champions_positions[player_id] = cell_position
+	if current_phase == Phase.COMBAT:
+		return
+	# Positioning phase
 	if champions_positions[0] != -1 and champions_positions[1] != -1:
 		current_phase = Phase.COMBAT
 		phase_changed.emit(current_phase)
 		turn_started.emit(current_player_id)
+
+
+func get_champion_position(player_id: int) -> int:
+	return champions_positions[player_id]
 
 
 func end_turn(player_id: int) -> void:
