@@ -1,6 +1,6 @@
 extends MeshInstance3D
 
-signal champion_dropped(grid_position: Vector2, world_position: Vector3)
+@export var can_be_dragged: bool = true
 
 var is_dragging: bool = false
 var drag_offset: Vector3
@@ -35,6 +35,10 @@ func _input(event: InputEvent) -> void:
 		_update_drag_position(event)
 
 func _start_drag(event: InputEventMouseButton) -> void:
+	# Check if this champion can be dragged
+	if not can_be_dragged:
+		return
+
 	# Check if mouse is over this champion
 	var camera = get_viewport().get_camera_3d()
 	if not camera:
