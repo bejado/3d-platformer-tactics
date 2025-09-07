@@ -111,6 +111,28 @@ func _create_grid() -> void:
 	var x_center := (cols - 1) * 0.5
 	var z_center := (rows - 1) * 0.5
 
+	# Create 4 materials: one dimension is light/dark, the other is player 0/player 1
+	var player_0_color: Color = Color(1.0, 0.5, 0.5)
+	var player_1_color: Color = Color(0.5, 0.5, 1.0)
+	var light_player_0_material: Material = StandardMaterial3D.new()
+	light_player_0_material.albedo_color = player_0_color
+	var dark_player_0_material: Material = StandardMaterial3D.new()
+	dark_player_0_material.albedo_color = player_0_color * 0.7
+	var light_player_1_material: Material = StandardMaterial3D.new()
+	light_player_1_material.albedo_color = player_1_color
+	var dark_player_1_material: Material = StandardMaterial3D.new()
+	dark_player_1_material.albedo_color = player_1_color * 0.7
+
+	# Create the movement range materials
+	var light_movement_material: Material = StandardMaterial3D.new()
+	light_movement_material.albedo_color = Color.GREEN
+	var dark_movement_material: Material = StandardMaterial3D.new()
+	dark_movement_material.albedo_color = Color.GREEN * 0.7
+
+	# Create the hover materials
+	var hover_material: Material = StandardMaterial3D.new()
+	hover_material.albedo_color = Color.YELLOW
+
 	var i = 0
 	for r in range(rows):
 		for c in range(cols):
@@ -147,41 +169,27 @@ func _create_grid() -> void:
 			# Store reference for debug toggle
 			debug_labels.append(label_3d)
 
-			# Create materials for hover effect
-			var original_material := StandardMaterial3D.new()
 			# Alternate white and grey for grid cells
+			var original_material: Material
+			var movement_material: Material
 			if ((r + c) % 2) == 0:
-				original_material.albedo_color = Color.WHITE
+				if i <= 11:
+					original_material = light_player_1_material
+				else:
+					original_material = light_player_0_material
+				movement_material = light_movement_material
 			else:
-				original_material.albedo_color = Color(0.7, 0.7, 0.7)
+				if i <= 11:
+					original_material = dark_player_1_material
+				else:
+					original_material = dark_player_0_material
+				movement_material = dark_movement_material
 			mi.material_override = original_material
-
-			var hover_material := StandardMaterial3D.new()
-			hover_material.albedo_color = Color.YELLOW
-
-			# Create movement range material (green with checkerboard multiplier)
-			var movement_material := StandardMaterial3D.new()
-			if ((r + c) % 2) == 0:
-				# White cell - use full green
-				movement_material.albedo_color = Color.GREEN
-			else:
-				# Grey cell - use darker green (multiply with 0.7)
-				movement_material.albedo_color = Color(0, 0.7, 0)
-
-			# Create hover + movement range material (yellow on green)
-			var hover_movement_material := StandardMaterial3D.new()
-			if ((r + c) % 2) == 0:
-				# White cell - bright yellow on green
-				hover_movement_material.albedo_color = Color(1, 1, 0)  # Bright yellow
-			else:
-				# Grey cell - darker yellow on green
-				hover_movement_material.albedo_color = Color(0.7, 0.7, 0)  # Darker yellow
 
 			# Store materials as metadata for hover detection
 			static_body.set_meta("original_material", original_material)
 			static_body.set_meta("hover_material", hover_material)
 			static_body.set_meta("movement_material", movement_material)
-			static_body.set_meta("hover_movement_material", hover_movement_material)
 			static_body.set_meta("mesh_instance", mi)
 
 			# Connect mouse signals to StaticBody3D
@@ -239,16 +247,8 @@ func _on_mouse_entered(static_body: StaticBody3D) -> void:
 	currently_hovered_cell = static_body
 
 	var mesh_instance = static_body.get_meta("mesh_instance")
-
-	# Choose appropriate hover material based on movement range state
-	if cell_index in cells_in_movement_range:
-		# Cell is in movement range - use yellow hover on green
-		var hover_movement_material = static_body.get_meta("hover_movement_material")
-		mesh_instance.material_override = hover_movement_material
-	else:
-		# Cell is not in movement range - use normal yellow hover
-		var hover_material = static_body.get_meta("hover_material")
-		mesh_instance.material_override = hover_material
+	var hover_material = static_body.get_meta("hover_material")
+	mesh_instance.material_override = hover_material
 
 
 func _on_mouse_exited(static_body: StaticBody3D) -> void:
