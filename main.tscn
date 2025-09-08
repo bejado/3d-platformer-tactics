@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cu0vu1v6km66y"]
+[gd_scene load_steps=14 format=3 uid="uid://cu0vu1v6km66y"]
 
 [ext_resource type="Script" uid="uid://c4t0q4iy3mmp4" path="res://scripts/main.gd" id="1_h2yge"]
 [ext_resource type="Script" uid="uid://dncfiif3gkw85" path="res://scripts/GridSpawner.gd" id="1_ig7tw"]
@@ -6,6 +6,8 @@
 [ext_resource type="Material" uid="uid://xgj68krnktdg" path="res://materials/champion_0.tres" id="3_1bvp3"]
 [ext_resource type="ArrayMesh" uid="uid://bws5ldhvsy55i" path="res://meshes/pawn.obj" id="4_7mycd"]
 [ext_resource type="Material" uid="uid://sfhienivfn" path="res://materials/champion_1.tres" id="5_lquwl"]
+[ext_resource type="Script" uid="uid://c4qywgkeiw21h" path="res://scripts/viewport.gd" id="7_5vw27"]
+[ext_resource type="Shader" uid="uid://dsvomj8eqcqyx" path="res://materials/outline.gdshader" id="7_272bh"]
 
 [sub_resource type="Environment" id="Environment_h2yge"]
 
@@ -16,11 +18,21 @@ radius = 0.25
 [sub_resource type="LabelSettings" id="LabelSettings_7mycd"]
 font_size = 62
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_272bh"]
+viewport_path = NodePath("StencilViewport")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5vw27"]
+resource_local_to_scene = true
+shader = ExtResource("7_272bh")
+shader_parameter/lineWeight = 3.0
+shader_parameter/outlineColor = Color(3, 0.8, 0, 0.8)
+shader_parameter/stencilMask = SubResource("ViewportTexture_272bh")
+
 [node name="Main" type="Node3D"]
 script = ExtResource("1_h2yge")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214735, -0.707107, -0.151841, 0.690612, 17.0526, 5.41058, 17.0474)
+transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214736, -0.707107, -0.151841, 0.690612, 17.0526, 5.41058, 17.0474)
 projection = 1
 size = 6.5
 
@@ -75,3 +87,24 @@ grow_horizontal = 2
 text = "lorem ipsum"
 label_settings = SubResource("LabelSettings_7mycd")
 horizontal_alignment = 1
+
+[node name="StencilViewport" type="SubViewport" parent="."]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+script = ExtResource("7_5vw27")
+
+[node name="Camera3D" type="Camera3D" parent="StencilViewport"]
+transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214736, -0.707107, -0.151841, 0.690612, 17.0526, 5.41058, 17.0474)
+cull_mask = 32
+projection = 1
+size = 6.5
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_5vw27")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
