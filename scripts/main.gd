@@ -25,12 +25,15 @@ func _on_turn_started(player_id: int, actions: Game.PlayerActions) -> void:
 		$Instructions.label_settings.font_color = Color.BLUE
 	self.current_player_id = player_id
 
-	grid.set_range(actions.moveable_cells)
+	_update_for_player_actions(actions)
 
 
 func _on_cell_clicked(_cell_index: int) -> void:
 	champions[self.current_player_id].cell_position = _cell_index
-	Game.set_champion_position(self.current_player_id, _cell_index)
+	var actions = Game.move_champion(self.current_player_id, _cell_index)
+	_update_for_player_actions(actions)
+
+	# TODO: don't automatically end turn here
 	Game.end_turn(self.current_player_id)
 
 
@@ -54,3 +57,7 @@ func _on_phase_changed(phase: Game.Phase) -> void:
 		Game.Phase.COMBAT:
 			for i in champions.size():
 				champions[i].can_be_dragged = false
+
+
+func _update_for_player_actions(actions: Game.PlayerActions) -> void:
+	grid.set_range(actions.moveable_cells)
