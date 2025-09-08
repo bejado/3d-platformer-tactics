@@ -6,56 +6,6 @@ extends Node3D
 var current_player_id: int = 0
 
 
-class GridPosition:
-	var row: int
-	var col: int
-
-	static var rows: int = 8
-	static var cols: int = 3
-
-	func _init(r: int = 0, c: int = 0):
-		row = r
-		col = c
-
-	func to_cell_index() -> int:
-		return row * cols + col
-
-	func is_in_bounds() -> bool:
-		return row >= 0 and row < rows and col >= 0 and col < cols
-
-	func equals(other: GridPosition) -> bool:
-		return row == other.row and col == other.col
-
-	func get_neighbors() -> Array[GridPosition]:
-		"""
-		Returns the neighbors (both diagonal and orthogonal) of the grid position.
-		"""
-		var neighbors: Array[GridPosition] = []
-		neighbors.append(GridPosition.new(row + 1, col))
-		neighbors.append(GridPosition.new(row - 1, col))
-		neighbors.append(GridPosition.new(row, col + 1))
-		neighbors.append(GridPosition.new(row, col - 1))
-		neighbors.append(GridPosition.new(row + 1, col + 1))
-		neighbors.append(GridPosition.new(row - 1, col + 1))
-		neighbors.append(GridPosition.new(row + 1, col - 1))
-		neighbors.append(GridPosition.new(row - 1, col - 1))
-		return neighbors.filter(func(neighbor): return neighbor.is_in_bounds())
-
-	static func from_cell_index(cell_index: int) -> GridPosition:
-		@warning_ignore("integer_division")
-		return GridPosition.new(cell_index / cols, cell_index % cols)
-
-	static func to_bitmask(grid_positions: Array[GridPosition]) -> int:
-		var bitmask: int = 0
-		for grid_position in grid_positions:
-			bitmask |= 1 << grid_position.to_cell_index()
-		return bitmask
-
-	static func debug_print(grid_positions: Array[GridPosition]) -> void:
-		for grid_position in grid_positions:
-			print(grid_position.to_cell_index())
-
-
 func _ready():
 	print(grid)
 	grid.cell_clicked.connect(_on_cell_clicked)
@@ -67,7 +17,7 @@ func _ready():
 		champions[i].champion_dropped.connect(_on_champion_dropped.bind(i))
 
 
-func _on_turn_started(player_id: int) -> void:
+func _on_turn_started(player_id: int, actions: Game.PlayerActions) -> void:
 	$Instructions.text = "Player %d's turn" % [player_id + 1]
 	if player_id == 0:
 		$Instructions.label_settings.font_color = Color.RED
@@ -75,23 +25,7 @@ func _on_turn_started(player_id: int) -> void:
 		$Instructions.label_settings.font_color = Color.BLUE
 	self.current_player_id = player_id
 
-	# Determine the movement range for this chamption.
-	var movement_range: Array[GridPosition] = []
-	var chamption_position = GridPosition.from_cell_index(champions[player_id].cell_position)
-	movement_range.append_array(chamption_position.get_neighbors())
-
-	# Don't allow this chamption to move to a cell if it's occupied.
-	var other_player_id = 1 - player_id
-	var other_champion_position = GridPosition.from_cell_index(
-		Game.get_champion_position(other_player_id)
-	)
-	movement_range = movement_range.filter(
-		func(cell): return not cell.equals(other_champion_position)
-	)
-
-	GridPosition.debug_print(movement_range)
-
-	grid.set_range(GridPosition.to_bitmask(movement_range))
+	grid.set_range(actions.moveable_cells)
 
 
 func _on_cell_clicked(_cell_index: int) -> void:
