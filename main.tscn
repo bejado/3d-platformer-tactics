@@ -24,8 +24,8 @@ viewport_path = NodePath("StencilViewport")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_5vw27"]
 resource_local_to_scene = true
 shader = ExtResource("7_272bh")
-shader_parameter/lineWeight = 3.0
-shader_parameter/outlineColor = Color(3, 0.8, 0, 0.8)
+shader_parameter/lineWeight = 5.0
+shader_parameter/outlineColor = Color(0, 3, 0, 0.8)
 shader_parameter/stencilMask = SubResource("ViewportTexture_272bh")
 
 [node name="Main" type="Node3D"]

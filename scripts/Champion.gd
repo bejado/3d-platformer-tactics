@@ -14,6 +14,13 @@ signal champion_dropped(cell_position: int)
 		global_position = Vector3(-1 + col, 0.1, -3.5 + row)
 		cell_position = cp
 @export var allowed_cell_range: Array[int] = [0, INF]
+@export var outlined: bool = false:
+	set(o):
+		outlined = o
+		if outlined:
+			set_layer_mask_value(6, true)
+		else:
+			set_layer_mask_value(6, false)
 
 var is_dragging: bool = false
 var drag_offset: Vector3
