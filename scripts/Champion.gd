@@ -2,6 +2,7 @@ extends MeshInstance3D
 class_name Champion
 
 signal champion_dropped(cell_position: int)
+signal champion_clicked
 
 @export var can_be_dragged: bool = true
 @export var cell_position: int = 0:
@@ -22,10 +23,12 @@ signal champion_dropped(cell_position: int)
 		else:
 			set_layer_mask_value(6, false)
 
-var is_dragging: bool = false
 var drag_offset: Vector3
 var original_position: Vector3
 var collision_body: StaticBody3D
+
+enum InteractionState { NOT_HOVERED, HOVERED, MAYBE_DRAG, DRAGGING }
+var interaction_state := InteractionState.NOT_HOVERED
 
 
 func _ready() -> void:
@@ -43,50 +46,54 @@ func _ready() -> void:
 	# Enable input processing
 	set_process_input(true)
 
+	# Connect mouse signals to StaticBody3D
+	collision_body.mouse_entered.connect(_on_mouse_entered.bind(collision_body))
+	collision_body.mouse_exited.connect(_on_mouse_exited.bind(collision_body))
+
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
-				_start_drag(event)
+				# Mouse down
+				if interaction_state == InteractionState.HOVERED and can_be_dragged:
+					interaction_state = InteractionState.MAYBE_DRAG
+					_prepare_drag(event)
 			else:
-				_end_drag(event)
+				# Mouse up
+				if interaction_state == InteractionState.HOVERED:
+					champion_clicked.emit()
+				elif interaction_state == InteractionState.MAYBE_DRAG:
+					champion_clicked.emit()
+					interaction_state = InteractionState.HOVERED
+				elif interaction_state == InteractionState.DRAGGING:
+					_end_drag(event)
+					interaction_state = InteractionState.HOVERED
 
-	elif event is InputEventMouseMotion and is_dragging:
-		_update_drag_position(event)
+	elif event is InputEventMouseMotion:
+		# Mouse move
+		if interaction_state == InteractionState.MAYBE_DRAG:
+			interaction_state = InteractionState.DRAGGING
+			_update_drag_position(event)
+		elif interaction_state == InteractionState.DRAGGING:
+			_update_drag_position(event)
 
 
-func _start_drag(event: InputEventMouseButton) -> void:
-	# Check if this champion can be dragged
-	if not can_be_dragged:
-		return
+func _on_mouse_entered(_static_body: StaticBody3D) -> void:
+	if interaction_state == InteractionState.NOT_HOVERED:
+		interaction_state = InteractionState.HOVERED
 
-	# Check if mouse is over this champion
-	var camera = get_viewport().get_camera_3d()
-	if not camera:
-		return
 
-	# Create a ray from camera through mouse position
-	var from = camera.project_ray_origin(event.position)
-	var to = from + camera.project_ray_normal(event.position) * 1000
+func _on_mouse_exited(_static_body: StaticBody3D) -> void:
+	if interaction_state == InteractionState.HOVERED:
+		interaction_state = InteractionState.NOT_HOVERED
 
-	# Check if ray intersects with this champion's bounding box
-	var space_state = get_world_3d().direct_space_state
-	var query = PhysicsRayQueryParameters3D.create(from, to)
-	var result = space_state.intersect_ray(query)
 
-	# Check if this champion is being clicked (check collision body instead of self)
-	if result and result.collider == collision_body:
-		is_dragging = true
-		drag_offset = global_position - _get_mouse_world_position(event.position)
+func _prepare_drag(event: InputEventMouseButton) -> void:
+	drag_offset = global_position - _get_mouse_world_position(event.position)
 
 
 func _end_drag(_event: InputEventMouseButton) -> void:
-	if not is_dragging:
-		return
-
-	is_dragging = false
-
 	# Find the closest grid cell
 	var result = _find_closest_grid_cell()
 
@@ -107,9 +114,6 @@ func _end_drag(_event: InputEventMouseButton) -> void:
 
 
 func _update_drag_position(event: InputEventMouseMotion) -> void:
-	if not is_dragging:
-		return
-
 	var new_position = _get_mouse_world_position(event.position) + drag_offset
 	global_position = new_position
 

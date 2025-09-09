@@ -15,6 +15,7 @@ func _ready():
 
 	for i in champions.size():
 		champions[i].champion_dropped.connect(_on_champion_dropped.bind(i))
+		champions[i].champion_clicked.connect(_on_champion_clicked.bind(i))
 
 
 func _on_turn_started(player_id: int, actions: Game.PlayerActions) -> void:
@@ -43,6 +44,10 @@ func _on_champion_dropped(
 ) -> void:
 	print("Champion ", champion_id, " dropped in cell: ", cell_position)
 	Game.set_champion_position(champion_id, cell_position)
+
+
+func _on_champion_clicked(champion_id: int) -> void:
+	print("Champion ", champion_id, " clicked")
 
 
 func _on_phase_changed(phase: Game.Phase) -> void:
