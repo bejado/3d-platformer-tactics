@@ -5,6 +5,21 @@ signal champion_dropped(cell_position: int)
 signal champion_clicked
 
 @export var can_be_dragged: bool = true
+@export var show_hover_style: bool = false:
+	set(hs):
+		show_hover_style = hs
+		if (
+			hs
+			and (
+				interaction_state == InteractionState.HOVERED
+				or interaction_state == InteractionState.MAYBE_DRAG
+				or interaction_state == InteractionState.DRAGGING
+			)
+		):
+			_apply_hover_state(true)
+		if not hs:
+			_apply_hover_state(false)
+
 @export var cell_position: int = 0:
 	set(cp):
 		if cp == -1:
@@ -26,6 +41,7 @@ signal champion_clicked
 var drag_offset: Vector3
 var original_position: Vector3
 var collision_body: StaticBody3D
+var hover_material: Material
 
 enum InteractionState { NOT_HOVERED, HOVERED, MAYBE_DRAG, DRAGGING }
 var interaction_state := InteractionState.NOT_HOVERED
@@ -34,6 +50,11 @@ var interaction_state := InteractionState.NOT_HOVERED
 func _ready() -> void:
 	# Add to champion group for easy identification
 	add_to_group("champion")
+
+	# Create the hover material
+	hover_material = StandardMaterial3D.new()
+	hover_material.albedo_color = Color.YELLOW
+	hover_material.render_priority = 1  # this is needed for material_overlay to work
 
 	# Find the StaticBody3D child for collision detection
 	collision_body = get_node("StaticBody3D")
@@ -67,8 +88,8 @@ func _input(event: InputEvent) -> void:
 					champion_clicked.emit()
 					interaction_state = InteractionState.HOVERED
 				elif interaction_state == InteractionState.DRAGGING:
-					_end_drag(event)
 					interaction_state = InteractionState.HOVERED
+					_end_drag(event)
 
 	elif event is InputEventMouseMotion:
 		# Mouse move
@@ -82,11 +103,21 @@ func _input(event: InputEvent) -> void:
 func _on_mouse_entered(_static_body: StaticBody3D) -> void:
 	if interaction_state == InteractionState.NOT_HOVERED:
 		interaction_state = InteractionState.HOVERED
+		if show_hover_style:
+			_apply_hover_state(true)
 
 
 func _on_mouse_exited(_static_body: StaticBody3D) -> void:
 	if interaction_state == InteractionState.HOVERED:
 		interaction_state = InteractionState.NOT_HOVERED
+		_apply_hover_state(false)
+
+
+func _apply_hover_state(state: bool) -> void:
+	if state:
+		material_overlay = hover_material
+	else:
+		material_overlay = null
 
 
 func _prepare_drag(event: InputEventMouseButton) -> void:

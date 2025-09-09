@@ -68,4 +68,6 @@ func _update_for_player_actions(player_id: int, actions: Game.PlayerActions) -> 
 	grid.set_range(actions.moveable_cells)
 	var other_player_id = 1 - player_id
 	champions[other_player_id].outlined = actions.can_attack
+	champions[other_player_id].show_hover_style = actions.can_attack
 	champions[player_id].outlined = false
+	champions[player_id].show_hover_style = false
