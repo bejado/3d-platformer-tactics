@@ -44,7 +44,9 @@ var original_position: Vector3
 var collision_body: StaticBody3D
 var hover_material: Material
 
-enum InteractionState { NOT_HOVERED, HOVERED, MAYBE_DRAG, DRAGGING }
+enum InteractionState {
+	NOT_HOVERED, MOUSE_INVALID, MOUSE_INVALID_HOVERED, HOVERED, MAYBE_DRAG, DRAGGING
+}
 var interaction_state := InteractionState.NOT_HOVERED
 
 
@@ -78,12 +80,20 @@ func _input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.pressed:
 				# Mouse down
-				if interaction_state == InteractionState.HOVERED and can_be_dragged:
+				if interaction_state == InteractionState.NOT_HOVERED:
+					interaction_state = InteractionState.MOUSE_INVALID
+				elif interaction_state == InteractionState.HOVERED and can_be_dragged:
 					interaction_state = InteractionState.MAYBE_DRAG
 					_prepare_drag(event)
 			else:
 				# Mouse up
-				if interaction_state == InteractionState.HOVERED:
+				if interaction_state == InteractionState.MOUSE_INVALID:
+					interaction_state = InteractionState.NOT_HOVERED
+				elif interaction_state == InteractionState.MOUSE_INVALID_HOVERED:
+					interaction_state = InteractionState.HOVERED
+					if show_hover_style:
+						_apply_hover_state(true)
+				elif interaction_state == InteractionState.HOVERED:
 					if can_be_clicked:
 						champion_clicked.emit()
 				elif interaction_state == InteractionState.MAYBE_DRAG:
@@ -108,12 +118,16 @@ func _on_mouse_entered(_static_body: StaticBody3D) -> void:
 		interaction_state = InteractionState.HOVERED
 		if show_hover_style:
 			_apply_hover_state(true)
+	elif interaction_state == InteractionState.MOUSE_INVALID:
+		interaction_state = InteractionState.MOUSE_INVALID_HOVERED
 
 
 func _on_mouse_exited(_static_body: StaticBody3D) -> void:
 	if interaction_state == InteractionState.HOVERED:
 		interaction_state = InteractionState.NOT_HOVERED
 		_apply_hover_state(false)
+	elif interaction_state == InteractionState.MOUSE_INVALID_HOVERED:
+		interaction_state = InteractionState.MOUSE_INVALID
 
 
 func _apply_hover_state(state: bool) -> void:

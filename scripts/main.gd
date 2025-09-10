@@ -55,7 +55,6 @@ func _on_champion_dropped(
 	Game.set_champion_position(champion_id, cell_position)
 
 
-
 func _on_phase_changed(phase: Game.Phase) -> void:
 	match phase:
 		Game.Phase.POSITION_CHAMPION:
