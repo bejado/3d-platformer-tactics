@@ -193,7 +193,7 @@ func _input(event: InputEvent) -> void:
 				label.visible = show_labels
 
 	elif event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 			# If there's a currently hovered cell, emit the click signal
 			if currently_hovered_cell:
 				var cell_index = currently_hovered_cell.get_meta("cell_index")

@@ -60,10 +60,16 @@ class ChampionTurn:
 	var did_attack: bool = false
 	var did_move: bool = false
 
+	func to_debug_string() -> String:
+		return "did_attack: %s, did_move: %s" % [did_attack, did_move]
+
 
 class PlayerActions:
 	var can_attack: bool = false
 	var moveable_cells: int = 0
+
+	func has_remaining_actions() -> bool:
+		return can_attack or moveable_cells != 0
 
 	func to_debug_string() -> String:
 		return "can_attack: %s, moveable_cells: %s" % [can_attack, moveable_cells]
@@ -98,6 +104,8 @@ func move_champion(player_id: int, cell_position: int) -> PlayerActions:
 	"""
 	if current_phase != Phase.COMBAT:
 		return
+	if current_player_id != player_id:
+		return
 	champions_positions[player_id] = cell_position
 	champion_turn_state[player_id].did_move = true
 	return _get_player_actions(player_id)
@@ -108,6 +116,8 @@ func attack_champion(player_id: int) -> PlayerActions:
 	Attacks the other champion.
 	"""
 	if current_phase != Phase.COMBAT:
+		return
+	if current_player_id != player_id:
 		return
 	champion_turn_state[player_id].did_attack = true
 	return _get_player_actions(player_id)

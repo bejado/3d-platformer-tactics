@@ -4,7 +4,8 @@ class_name Champion
 signal champion_dropped(cell_position: int)
 signal champion_clicked
 
-@export var can_be_dragged: bool = true
+@export var can_be_dragged: bool = false
+@export var can_be_clicked: bool = false
 @export var show_hover_style: bool = false:
 	set(hs):
 		show_hover_style = hs
@@ -83,9 +84,11 @@ func _input(event: InputEvent) -> void:
 			else:
 				# Mouse up
 				if interaction_state == InteractionState.HOVERED:
-					champion_clicked.emit()
+					if can_be_clicked:
+						champion_clicked.emit()
 				elif interaction_state == InteractionState.MAYBE_DRAG:
-					champion_clicked.emit()
+					if can_be_clicked:
+						champion_clicked.emit()
 					interaction_state = InteractionState.HOVERED
 				elif interaction_state == InteractionState.DRAGGING:
 					interaction_state = InteractionState.HOVERED
