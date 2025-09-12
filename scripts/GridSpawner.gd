@@ -31,18 +31,14 @@ var cells_in_movement_range: Array[int] = []
 var is_showing_movement_range: bool = false
 
 
-func set_range(range_bits: int) -> void:
-	"""
-	range_bits is a bitmask, where each bit represents a cell
-	For example, if range_bits is 0b1, then only cell 0 is in range
-	"""
+func set_range(cell_positions: Array[int], offset: int = 0) -> void:
 	hide_range()
 
 	var cell_count = rows * cols
 
 	# Loop through each bit in range_bits
 	for i in range(cell_count):
-		if range_bits & (1 << i):
+		if (i + offset) in cell_positions:
 			cells_in_movement_range.append(i)
 
 			# Get the target cell

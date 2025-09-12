@@ -23,14 +23,18 @@ signal champion_clicked
 
 @export var cell_position: int = 0:
 	set(cp):
-		if cp == -1:
-			cell_position = -1
-			return
-		var col = cp % 3
-		var row = cp / 3
-		global_position = Vector3(-1 + col, 0.1, -3.5 + row)
 		cell_position = cp
-@export var allowed_cell_range: Array[int] = [0, INF]
+		if cp == -1:
+			return
+		var v = GridPosition.unidx(cp)
+		global_position = GridPosition.coordinates(v)
+
+# Which half of the grid the champion is allowed to be dropped in
+# 0: no constraints
+# -1: left half of the grid (in negative x direction)
+# 1: right half of the grid (in positive x direction)
+@export var allowed_cell_sector: int = 0
+
 @export var outlined: bool = false:
 	set(o):
 		outlined = o
@@ -43,6 +47,9 @@ var drag_offset: Vector3
 var original_position: Vector3
 var collision_body: StaticBody3D
 var hover_material: Material
+
+# Define all possible grid positions
+var grid_positions := GridPosition.all_coordinates()
 
 enum InteractionState {
 	NOT_HOVERED, MOUSE_INVALID, MOUSE_INVALID_HOVERED, HOVERED, MAYBE_DRAG, DRAGGING
@@ -145,25 +152,84 @@ func _end_drag(_event: InputEventMouseButton) -> void:
 	# Find the closest grid cell
 	var result = _find_closest_grid_cell()
 
-	# Check if the cell is in the allowed cell range
-	var is_in_allowed_cell_range = (
-		result["index"] >= allowed_cell_range[0] and result["index"] <= allowed_cell_range[1]
-	)
-
-	if result["found"] and is_in_allowed_cell_range:
-		# Snap to grid cell
-		global_position = result["position"]
-		original_position = global_position
-		cell_position = result["index"]
-		champion_dropped.emit(cell_position)
-	else:
+	if not result["found"]:
 		# Return to original position if no valid drop target
 		global_position = original_position
+		return
+
+	# Check if the cell is in the allowed sector
+	var cell := GridPosition.unidx(result["index"])
+	@warning_ignore("integer_division") var half_width := GridPosition.D / 2
+	var is_in_allowed_cell_range = (
+		allowed_cell_sector == 0 or ((cell.y - half_width + 0.5) * -1 * allowed_cell_sector > 0)
+	)
+
+	if not is_in_allowed_cell_range:
+		# Return to original position if no valid drop target
+		global_position = original_position
+		return
+
+	# Snap to grid cell
+	global_position = result["position"]
+	original_position = global_position
+	cell_position = result["index"]
+	champion_dropped.emit(cell_position)
 
 
 func _update_drag_position(event: InputEventMouseMotion) -> void:
 	var new_position = _get_mouse_world_position(event.position) + drag_offset
 	global_position = new_position
+
+
+func _get_mouse_sector(mouse_pos: Vector2) -> int:
+	var camera = get_viewport().get_camera_3d()
+	if not camera:
+		return 0
+
+	# Project the two sector lines (at x=1.5, y=0.1 and y=1.2) onto the viewport
+	var line1_start = camera.unproject_position(
+		Vector3(GridPosition.EAST_EDGE_X, GridPosition.EAST_EDGE_Y_OFFSET, -1000)
+	)
+	var line1_end = camera.unproject_position(
+		Vector3(GridPosition.EAST_EDGE_X, GridPosition.EAST_EDGE_Y_OFFSET, 1000)
+	)
+	var line2_start = camera.unproject_position(
+		Vector3(
+			GridPosition.EAST_EDGE_X,
+			GridPosition.EAST_EDGE_Y_OFFSET + GridPosition.CELL_HEIGHT,
+			-1000
+		)
+	)
+	var line2_end = camera.unproject_position(
+		Vector3(
+			GridPosition.EAST_EDGE_X,
+			GridPosition.EAST_EDGE_Y_OFFSET + GridPosition.CELL_HEIGHT,
+			1000
+		)
+	)
+
+	# Test which side of each line the mouse is on
+	var mouse_side_line1 = _point_side_of_line(mouse_pos, line1_start, line1_end)
+	var mouse_side_line2 = _point_side_of_line(mouse_pos, line2_start, line2_end)
+
+	# Determine which sector the mouse is in
+	# If mouse is on the "left" side of line1, it's in sector 0
+	# If mouse is on the "right" side of line1 but "left" side of line2, it's in sector 1
+	# If mouse is on the "right" side of line2, it's in sector 2
+	if mouse_side_line1 < 0:
+		return 0  # Below/left of first line
+	elif mouse_side_line2 < 0:
+		return 1  # Between the two lines
+	else:
+		return 2  # Above/right of second line
+
+
+func _point_side_of_line(point: Vector2, line_start: Vector2, line_end: Vector2) -> float:
+	# Calculate which side of the line the point is on using cross product
+	# Returns negative if point is on one side, positive if on the other
+	var line_vector = line_end - line_start
+	var point_vector = point - line_start
+	return line_vector.x * point_vector.y - line_vector.y * point_vector.x
 
 
 func _get_mouse_world_position(mouse_pos: Vector2) -> Vector3:
@@ -174,20 +240,23 @@ func _get_mouse_world_position(mouse_pos: Vector2) -> Vector3:
 	var from = camera.project_ray_origin(mouse_pos)
 	var to = from + camera.project_ray_normal(mouse_pos) * 1000
 
-	# Project onto the ground plane (y = 0)
+	# Determine which ground plane to use based on mouse sector
+	var sector = _get_mouse_sector(mouse_pos)
+	var ground_y = 0.1
+	if sector == 0:
+		ground_y = -1.0
+	elif sector == 1:
+		ground_y = 0.1
+	elif sector == 2:
+		ground_y = 1.2
+
+	# Project onto the appropriate ground plane
 	var direction = (to - from).normalized()
-	var t = -from.y / direction.y
+	var t = (ground_y - from.y) / direction.y
 	return from + direction * t
 
 
 func _find_closest_grid_cell() -> Dictionary:
-	# Define all possible grid positions
-	var grid_positions = []
-	# Generate a 3x4 grid of positions in a loop
-	for row in range(8):
-		for col in range(3):
-			grid_positions.append(Vector3(-1 + col, 0.1, -3.5 + row))
-
 	var closest_position = Vector3.ZERO
 	var closest_distance = INF
 
