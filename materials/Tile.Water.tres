@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bmlb2dad1n3q4"]
+
+[resource]
+resource_name = "Tile.Water"
+cull_mode = 2
+albedo_color = Color(0.248045, 0.27044, 0.860887, 1)

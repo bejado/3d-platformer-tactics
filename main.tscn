@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cu0vu1v6km66y"]
+[gd_scene load_steps=15 format=3 uid="uid://cu0vu1v6km66y"]
 
 [ext_resource type="Script" uid="uid://c4t0q4iy3mmp4" path="res://scripts/main.gd" id="1_h2yge"]
 [ext_resource type="Script" uid="uid://dncfiif3gkw85" path="res://scripts/GridSpawner.gd" id="1_ig7tw"]
@@ -8,8 +8,13 @@
 [ext_resource type="Material" uid="uid://sfhienivfn" path="res://materials/champion_1.tres" id="5_lquwl"]
 [ext_resource type="Script" uid="uid://c4qywgkeiw21h" path="res://scripts/viewport.gd" id="7_5vw27"]
 [ext_resource type="Shader" uid="uid://dsvomj8eqcqyx" path="res://materials/outline.gdshader" id="7_272bh"]
+[ext_resource type="PackedScene" uid="uid://h4sb5rlcdc1q" path="res://levels/platforms.blend" id="9_kek77"]
 
 [sub_resource type="Environment" id="Environment_h2yge"]
+background_mode = 1
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+tonemap_mode = 2
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0xm2m"]
 height = 1.0
@@ -32,28 +37,27 @@ shader_parameter/stencilMask = SubResource("ViewportTexture_272bh")
 script = ExtResource("1_h2yge")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(0.707107, -0.151841, 0.690612, 0, 0.976672, 0.214736, -0.707107, -0.151841, 0.690612, 17.0526, 5.41058, 17.0474)
+transform = Transform3D(0.699664, -0.196935, 0.686796, 0, 0.961261, 0.275638, -0.714473, -0.192853, 0.67256, 17.932, 7.256, 17.583)
 projection = 1
 size = 6.5
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.0139621, -0.474042, 0.880391, 0, 0.880477, 0.474088, -0.999903, -0.00661927, 0.0122933, 0, 0, 0)
-light_energy = 1.4
-directional_shadow_mode = 1
-directional_shadow_split_1 = 0.009
-directional_shadow_split_2 = 0.412
+transform = Transform3D(-0.790884, 0.496974, -0.357098, -0.560113, -0.822922, 0.095249, -0.246528, 0.275346, 0.929198, 0, 0, 0)
+rotation_order = 1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_h2yge")
 
 [node name="Floor0" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.1, 0)
+visible = false
 script = ExtResource("1_ig7tw")
 rows = 8
 cols = 3
 spacing = 1.0
 
 [node name="Floor1" type="Node3D" parent="."]
+visible = false
 script = ExtResource("1_ig7tw")
 rows = 8
 cols = 3
@@ -61,6 +65,7 @@ spacing = 1.0
 
 [node name="Floor2" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+visible = false
 script = ExtResource("1_ig7tw")
 rows = 8
 cols = 3
@@ -122,3 +127,5 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="platforms" parent="." instance=ExtResource("9_kek77")]

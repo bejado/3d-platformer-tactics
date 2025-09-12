@@ -9,11 +9,10 @@ const H := 3
 const N := W * D * H  # 72
 
 const CELL_WIDTH := 1.0
-const CELL_HEIGHT := 1.1
+const CELL_HEIGHT := 2.0
 const CELL_DEPTH := 1.0
 
 const EAST_EDGE_X := 1.5
-const EAST_EDGE_Y_OFFSET := 0.1
 
 var x: int
 var y: int
@@ -87,7 +86,7 @@ static func unidx(i: int) -> Vector3i:
 
 
 static func coordinates(v: Vector3i) -> Vector3:
-	return Vector3(-1.0 + v.x, -1.0 + v.z * 1.1, -3.5 + v.y)
+	return Vector3(-1.0 + v.x, -2.0 + v.z * 2.0, -3.5 + v.y)
 
 
 static func all_coordinates() -> Array[Vector3]:

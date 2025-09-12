@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b4w2atkerq558"]
+
+[resource]
+resource_name = "Tile.Ground"
+cull_mode = 2
+albedo_color = Color(0, 0.374989, 0.123903, 1)

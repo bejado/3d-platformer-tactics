@@ -186,24 +186,24 @@ func _get_mouse_sector(mouse_pos: Vector2) -> int:
 	if not camera:
 		return 0
 
-	# Project the two sector lines (at x=1.5, y=0.1 and y=1.2) onto the viewport
+	# Project the two sector lines onto the viewport
 	var line1_start = camera.unproject_position(
-		Vector3(GridPosition.EAST_EDGE_X, GridPosition.EAST_EDGE_Y_OFFSET, -1000)
+		Vector3(GridPosition.EAST_EDGE_X, 0, -1000)
 	)
 	var line1_end = camera.unproject_position(
-		Vector3(GridPosition.EAST_EDGE_X, GridPosition.EAST_EDGE_Y_OFFSET, 1000)
+		Vector3(GridPosition.EAST_EDGE_X, 0, 1000)
 	)
 	var line2_start = camera.unproject_position(
 		Vector3(
 			GridPosition.EAST_EDGE_X,
-			GridPosition.EAST_EDGE_Y_OFFSET + GridPosition.CELL_HEIGHT,
+			GridPosition.CELL_HEIGHT,
 			-1000
 		)
 	)
 	var line2_end = camera.unproject_position(
 		Vector3(
 			GridPosition.EAST_EDGE_X,
-			GridPosition.EAST_EDGE_Y_OFFSET + GridPosition.CELL_HEIGHT,
+			GridPosition.CELL_HEIGHT,
 			1000
 		)
 	)
@@ -241,14 +241,15 @@ func _get_mouse_world_position(mouse_pos: Vector2) -> Vector3:
 	var to = from + camera.project_ray_normal(mouse_pos) * 1000
 
 	# Determine which ground plane to use based on mouse sector
+	# TODO: these constants should be in GridPosition
 	var sector = _get_mouse_sector(mouse_pos)
-	var ground_y = 0.1
+	var ground_y = 0.0
 	if sector == 0:
-		ground_y = -1.0
+		ground_y = -2.0
 	elif sector == 1:
-		ground_y = 0.1
+		ground_y = 0.0
 	elif sector == 2:
-		ground_y = 1.2
+		ground_y = 2.0
 
 	# Project onto the appropriate ground plane
 	var direction = (to - from).normalized()
